@@ -41,4 +41,4 @@ for df in dfs:
     tables_list.append(data_structure)  # ✅ Each table gets its own independent dict
 
     
-print(tables_list[1])
+print(tables_list[0])
