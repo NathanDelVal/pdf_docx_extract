@@ -4,7 +4,7 @@ import tabula
 
 ### REGEX'S PARA CAPTURA###
 re_month = r"janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro"
-re_parametros = r"[0-9]+[\r\s]+?semana(l|is)|mensa(l|is)|trimestra(l|is)|bimestra(l|is)|anua(l|is)"
+re_parametros = r"\d+\s+?(semana(l|is)|mensa(l|is)|trimestra(l|is)|bimestra(l|is)|anua(l|is))"
 ################
 
 tables_list = []
