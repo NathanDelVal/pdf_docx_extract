@@ -19,7 +19,7 @@ for df in dfs:
     temp_arr = []
 
     for i, r in df.iterrows():  
-        if re.findall(r"1.\s?par[aâ]metro", r.to_string(), re.IGNORECASE):
+        if re.findall(r"1\.\s*par[aâ]metro", r.to_string(), re.IGNORECASE):
             if temp_arr:  # ✅ Avoid appending empty arrays
                 data_structure["data"] += temp_arr
             temp_arr = []
