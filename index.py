@@ -8,7 +8,7 @@ from unidecode import unidecode
 
 ### REGEX'S PARA CAPTURA###
 re_month = r"janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro"
-re_parametros = r"\d+[\s\-]*\r?\n[\s\-]*(?:semana(?:l|is)|mensa(?:l|is)|trimestra(?:l|is)|bimestra(?:l|is)|anua(?:l|is))"
+re_parametros = r"\d+[\s\r\n\-]*(?:semanal|semanais|mensal|mensais|trimestral|trimestrais|bimestral|bimestrais|anual|anuais)"
 re_find_table_summary = r"ano[\:\-\s]+.*sistema[\:\-\s]+.*municipio[\:\-\s]+.*data[:=\s]+.*"
 re_extract_table_summary = r"\b(?:ano|sistema|municipio|data)\b[\:\-\s]+[^:]+?(?=\s+\b(?:ano|sistema|municipio|data)\b|$)"
 re_extract_date = r"(\d{2}\/\d{2}\/\d{4})"
