@@ -6,7 +6,7 @@ import re
 ### REGEX'S ###
 re_month = r"(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)"
 re_find_table_summary = r"ano[\:\-\s]+.*sistema[\:\-\s]+.*municipio[\:\-\s]+.*data[:=\s]+.*"
-re_extract_table_summary = r"\b(?:ano|sistema|municipio|data|uts)\b[\:\-\s]+[^:]+?(?=\s+\b(?:ano|sistema|municipio|data)\b|$)"
+re_extract_table_summary = r"\b(?:ano|sistema(?:/solu[cç][aã]o alternativa)?|municipio|uts|data)\b[\:\-\s]+.*?(?=\s+\b(?:ano|sistema|municipio|uts|data|$)\b|$)"
 re_extract_date = r"(\d{2}\/\d{2}\/\d{4})"
 
 counter = 0
@@ -16,11 +16,13 @@ docx_tables_data = []
 temp_arr = []
 
 # Load the .docx file
-doc = Document("./amostragem/teste6.docx")
+filename = "teste5.docx"
+doc = Document(f"./amostragem/{filename}")
+
 # Print each paragraph
 for para in doc.paragraphs:
     if re.findall(re_find_table_summary, unidecode(para.text), re.IGNORECASE):
-        data = re.findall(re_extract_table_summary, unidecode(para.text), re.IGNORECASE)      
+        data = re.findall(re_extract_table_summary, unidecode(para.text), re.IGNORECASE)   
         for i in range(0, len(data), 4):
             counter += 1
             summary_structure = {"ano": "", "sistema": "", "municipio": "", "data": ""}
@@ -29,7 +31,9 @@ for para in doc.paragraphs:
             summary_structure["municipio"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+2], re.IGNORECASE)[0], re.IGNORECASE)[1]
             summary_structure["data"] = re.findall(re_extract_date, data[i+3], re.IGNORECASE)
             docx_tables[f"cabecalho {counter}"] = { "tabelas": [], "dados_de_cabecalho": summary_structure}
-# print(len(docx_tables))
+    else:
+        print(unidecode(para.text))
+print(docx_tables)
 counter = 0
 
 for t in doc.tables:    #ativa o algoritmo de leitura de tabelas: lê os dados, separa em tabelas e os guarda em uma variável global
@@ -72,6 +76,16 @@ for x in range(len(docx_tables_data)):
         decrementer += 1
     else:
         docx_tables[f"cabecalho {x - decrementer + 1}"]["tabelas"].append(docx_tables_data[x])
-# print(docx_tables["cabecalho 43"]["tabelas"])
+
+# print(docx_tables["cabecalho 1"])
+
+filename = f"{filename.split(".")[0]}_extraction.txt"
+
+# Write to the file in the current directory
+with open(filename, "w", encoding="utf-8") as f:
+    f.write(str(docx_tables))
+
+print(f"✅ File '{filename}' has been written to the current directory.")
+
 
         
