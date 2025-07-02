@@ -5,7 +5,7 @@ import re
 
 ### REGEX'S ###
 re_month = r"(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)"
-re_find_table_summary = r"ano[\:\-\s]+.*sistema[\:\-\s]+.*municipio[\:\-\s]+.*data[:=\s]+.*"
+re_find_table_summary = r"ano[\:\-\s]+.*sistema(?:/solu[cç][aã]o alternativa)?[\:\-\s]+.*municipio[\:\-\s]+.*data[:=\s]+.*"
 re_extract_table_summary = r"\b(?:ano|sistema(?:/solu[cç][aã]o alternativa)?|municipio|uts|data)\b[\:\-\s]+.*?(?=\s+\b(?:ano|sistema|municipio|data|$)\b|$)"
 re_extract_date = r"(\d{2}\/\d{2}\/\d{4})"
 
@@ -16,7 +16,7 @@ docx_tables_data = []
 temp_arr = []
 
 # Load the .docx file
-filename = "teste4.docx"
+filename = "teste2.docx"
 doc = Document(f"./amostragem/{filename}")
 
 # Print each paragraph
@@ -27,9 +27,13 @@ for para in doc.paragraphs:
             counter += 1
             summary_structure = {"ano": "", "sistema": "", "municipio": "", "data": ""}
             summary_structure["ano"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i], re.IGNORECASE)[0], re.IGNORECASE)[1]
-            summary_structure["sistema"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+1], re.IGNORECASE)[0], re.IGNORECASE)[1]
+            summary_structure["sistema"] = re.split(r"^\w+(?:\/\w+)?[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+1], re.IGNORECASE)[0], re.IGNORECASE)[1]
             summary_structure["municipio"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+2], re.IGNORECASE)[0], re.IGNORECASE)[1]
             summary_structure["data"] = re.findall(re_extract_date, data[i+3], re.IGNORECASE)
+            try:  
+                summary_structure["parametro_extra"] = re.findall(r"uts[\:\s\-]?.*?$", data[i+3], re.IGNORECASE)
+            except:
+                pass
             docx_tables[f"cabecalho {counter}"] = { "tabelas": [], "dados_de_cabecalho": summary_structure}
 counter = 0
 
@@ -83,6 +87,3 @@ with open(filename, "w", encoding="utf-8") as f:
     f.write(str(docx_tables))
 
 print(f"✅ File '{filename}' has been written to the current directory.")
-
-
-        
