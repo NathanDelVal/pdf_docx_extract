@@ -73,9 +73,7 @@ for x in range(len(docx_tables_data)):
     else:
         docx_tables[f"cabecalho {x - decrementer + 1}"]["tabelas"].append(docx_tables_data[x])
 
-# print(docx_tables["cabecalho 1"])
-
-filename = f"{filename.split(".")[0]}_extraction.txt"
+filename = f"{filename.split(".")[0]}_docx_extraction.txt"
 
 # Write to the file in the current directory
 with open(filename, "w", encoding="utf-8") as f:
