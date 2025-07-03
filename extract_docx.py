@@ -2,12 +2,7 @@ from docx import Document
 from unidecode import unidecode
 import os
 import re
-
-### REGEX'S ###
-re_month = r"(janeiro|fevereiro|mar[cç]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)"
-re_find_table_summary = r"ano[\:\-\s]+.*sistema(?:/solu[cç][aã]o alternativa)?[\:\-\s]+.*municipio[\:\-\s]+.*data[:=\s]+.*"
-re_extract_table_summary = r"\b(?:ano|sistema(?:/solu[cç][aã]o alternativa)?|municipio|uts|data)\b[\:\-\s]+.*?(?=\s+\b(?:ano|sistema|municipio|data|$)\b|$)"
-re_extract_date = r"(\d{2}\/\d{2}\/\d{4})"
+import regexes
 
 counter = 0
 
@@ -21,15 +16,15 @@ doc = Document(f"./amostragem/{filename}")
 
 # Print each paragraph
 for para in doc.paragraphs:
-    if re.findall(re_find_table_summary, unidecode(para.text), re.IGNORECASE):
-        data = re.findall(re_extract_table_summary, unidecode(para.text), re.IGNORECASE)  
+    if re.findall(regexes.re_find_table_summary, unidecode(para.text), re.IGNORECASE):
+        data = re.findall(regexes.re_extract_table_summary, unidecode(para.text), re.IGNORECASE)  
         for i in range(0, len(data), 4):
             counter += 1
             summary_structure = {"ano": "", "sistema": "", "municipio": "", "data": ""}
             summary_structure["ano"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i], re.IGNORECASE)[0], re.IGNORECASE)[1]
             summary_structure["sistema"] = re.split(r"^\w+(?:\/\w+)?[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+1], re.IGNORECASE)[0], re.IGNORECASE)[1]
             summary_structure["municipio"] = re.split(r"^\w+[\-\:\s]+", re.split(r"[\:\-](?=\b\w+\b)", data[i+2], re.IGNORECASE)[0], re.IGNORECASE)[1]
-            summary_structure["data"] = re.findall(re_extract_date, data[i+3], re.IGNORECASE)
+            summary_structure["data"] = re.findall(regexes.re_extract_date, data[i+3], re.IGNORECASE)
             try:  
                 summary_structure["parametro_extra"] = re.findall(r"uts[\:\s\-]?.*?$", data[i+3], re.IGNORECASE)
             except:
@@ -47,8 +42,8 @@ for t in doc.tables:    #ativa o algoritmo de leitura de tabelas: lê os dados, 
 for t in range(len(temp_arr)):
     temp_months = []
     for r in range(len(temp_arr[t])):
-        if re.search(re_month, str(temp_arr[t][r]), re.IGNORECASE):
-            temp_months = {cell for cell in temp_arr[t][r] if re.search(re_month, str(cell), re.IGNORECASE)}
+        if re.search(regexes.re_month, str(temp_arr[t][r]), re.IGNORECASE):
+            temp_months = {cell for cell in temp_arr[t][r] if re.search(regexes.re_month, str(cell), re.IGNORECASE)}
             temp_months = list(temp_months)
         if re.search(r"(3.frequ[eê]ncia)", str(temp_arr[t][r]), re.IGNORECASE):
             temp_arr[t] = temp_arr[t][r+1:]
